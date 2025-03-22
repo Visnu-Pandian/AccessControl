@@ -1,2 +1,7 @@
 # AccessControl
-The goal of this assignment is to implement access control to a simplified Facebook, called MyFacebook.
+
+The goal of this assignment is to implement access control to a simplified Facebook, called MyFacebook. The system consists of only one profile owner (you), who has friends that can belong to zero, one or more lists. A person must be your friend to view your profile and post pictures to your profile.  You, the profile owner, can perform administrative tasks such as adding friends, creating lists, assigning friends to lists, and changing owners and setting access control of pictures posted on your timeline. In other words, you are the administrator (or root user) of your profile.
+
+In MyFacebook if your friend John posts a picture on your timeline, by default he is the owner of the picture. However, you may not want your friend John to dictate who can or cannot see the picture he has posted on your timeline. Since you have administrative privileges over your profile, you can change the owner of any picture which is posted on your timeline (i.e., you can make another friend to be the owner, or you can become the owner). Every picture that is posted on your profile has an ACL associated with it, that is, it has an owner, a list associated with it, which is optional, and a tuple of access permissions.  As any trusted system, your system will log its activity in an audit log file.
+
+The programming assignment does not include GUI. You will only implement the functionality behind the access control of your profile. The input will be given in an ASCII file, which contains the instructions to be executed.
