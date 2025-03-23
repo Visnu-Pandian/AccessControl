@@ -1,14 +1,54 @@
+import os
 from helper import *
 
-def friendadd(arg: str) -> None:
+def friendadd(friendname: str) -> None:
     """
-    Creates a friend with a specified name and stores them in friends.txt.
+    Creates a friend with a specified name and stores them in the master list of friends.txt.
+    This friend is part of no other lists initially.
     
     Example use: friendadd friendname
-    """
     
-    friendname = arg
-    updatelog("test")
+    Parameter:
+    friendname (str): Name of friend to add.
+    
+    Return:
+    None
+    """
+    friendname = friendname.strip()
+    
+    if not checkValid(friendname):
+        updatelog(f"Invalid name entered: {friendname}. Name was not added to the list.")
+        return
+
+    # Check for empty file AKA first call
+    if os.stat("friends.txt").st_size == 0:
+        set_ownername(friendname)
+        
+        with open("friends.txt", 'a') as file:
+            file.write(f"{friendname}\n")
+            updatelog(f"{friendname} was added as owner. View profile to make additional changes.")
+    
+    elif (get_username() != get_ownername()):
+        updatelog(f"{get_username} does not have permission to invoke this method.")
+        return
+    
+    else:
+        
+        with open("friends.txt", 'r') as file:
+            friends = file.readlines()
+            
+        for friend in friends:
+            if friendname == friend.strip():
+                updatelog(f"{friendname} already exists in the friends list.")
+                return
+        
+        with open("friends.txt", 'a') as file:
+            
+            file.write(f"{friendname}\n")
+            updatelog(f"{friendname} was added as friend.")
+
+    add_to_list_in_masterlist("all_friends", friendname)
+    return
 
 def viewby(arg: str) -> None:
     """
