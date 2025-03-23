@@ -16,6 +16,7 @@ def friendadd(friendname: str) -> None:
     """
     friendname = friendname.strip()
     
+    # Check for valid name
     if not checkValid(friendname):
         updatelog(f"Invalid name entered: {friendname}. Name was not added to the list.")
         return
@@ -28,15 +29,18 @@ def friendadd(friendname: str) -> None:
             file.write(f"{friendname}\n")
             updatelog(f"{friendname} was added as owner. View profile to make additional changes.")
     
+    # Can only be called by the owner
     elif (get_username() != get_ownername()):
         updatelog(f"{get_username} does not have permission to invoke this method.")
         return
     
+    # When called by the owner
     else:
         
         with open("friends.txt", 'r') as file:
             friends = file.readlines()
-            
+        
+        # Checking for pre-existing friend
         for friend in friends:
             if friendname == friend.strip():
                 updatelog(f"{friendname} already exists in the friends list.")
@@ -47,10 +51,11 @@ def friendadd(friendname: str) -> None:
             file.write(f"{friendname}\n")
             updatelog(f"{friendname} was added as friend.")
 
+    # Only reached in cases 1 and 4 AKA new profile or owner adding a unique friend
     add_to_list_in_masterlist("all_friends", friendname)
     return
 
-def viewby(arg: str) -> None:
+def viewby(friendname: str) -> None:
     """
     Checks if the friend is in the friends list.
     If they are, they can view the user's profile.
@@ -59,6 +64,33 @@ def viewby(arg: str) -> None:
     
     Example use: viewby friendname
     """
+    # Check logged in status
+    if get_is_logged():
+        updatelog(f"Current user: {get_username()}. Must first log out to change user.")
+        return
+    
+    friendname = friendname.strip()
+    
+    # Check for valid name
+    if not checkValid(friendname):
+        updatelog(f"Invalid name entered: {friendname}. Name cannot be used.")
+        return
+    
+    # Check if friend exists in list
+    with open("friends.txt", 'r') as file:
+        friends = file.readlines()
+    
+    for friend in friends:
+        # If friend found in list
+        if friendname == friend.strip():
+            set_is_logged(True)
+            set_username(friendname)
+            updatelog(f"Viewing profile of {get_ownername()} as {friendname}.")
+            return
+    
+    # If friend does not exist
+    updatelog(f"Could not find {friendname} in the friends list.")
+    return
 
 def logout() -> None:
     """
@@ -66,8 +98,17 @@ def logout() -> None:
     
     Example use: logout
     """
+    # Check logged in status
+    if isLogged:
+        updatelog(f"User {get_username()} has been logged out.")
+        set_is_logged(False)
+        set_username("")
+    else:
+        updatelog("No user has been logged in.")
     
-def listadd(arg: str) -> None:
+    return
+    
+def listadd(listname: str) -> None:
     """
     Creates a unique empty list to which friends may be added.
     Can only be executed by the profile owner.
@@ -75,6 +116,37 @@ def listadd(arg: str) -> None:
     
     Example use: listadd listname
     """
+    
+    # Check logged in
+    if not isLogged:
+        updatelog("Must be logged in to use this command.")
+        return
+    # Check if owner
+    elif (get_username() != get_ownername()):
+        updatelog("Only profile owner can use this command.")
+        return
+    
+    listname = listname.strip()
+    
+    # Check for valid name
+    if (not checkValid(listname)) or (listname == "nil"):
+        updatelog(f"Invalid name entered: {listname}. Name cannot be used.")
+        return
+    
+    
+    all_lists = get_list_from_masterlist("all_lists")
+    
+    # Check for pre-existing name
+    for item in all_lists:
+        if listname == item:
+            updatelog(f"{listname} is not available.")
+            return
+    
+    # If unique list name
+    add_to_masterlist(listname)
+    add_to_list_in_masterlist("all_lists", listname)
+    updatelog(f"Registered {listname}.")
+    return
 
 def friendlist(arg: str) -> None:
     """
@@ -84,6 +156,46 @@ def friendlist(arg: str) -> None:
 
     Example use: friendlist friendname listname
     """
+
+    # Check logged in
+    if not isLogged:
+        updatelog("Must be logged in to use this command.")
+        return
+    # Check if owner
+    elif (get_username() != get_ownername()):
+        updatelog("Only profile owner can use this command.")
+        return
+    
+    # Separating args
+    parts = arg.split(' ', 1)
+    friendname = parts[0].strip()
+    listname = parts[1].strip()
+    
+    # Finding reference lists
+    friends = get_list_from_masterlist("all_friends")
+    lists = get_list_from_masterlist("all_lists")
+    
+    # Check for valid name
+    if (not checkValid(friendname)) or (friendname == "nil"):
+        updatelog(f"Invalid friend name entered: {friendname}. Name cannot be used.")
+        return
+    # Check if it exists
+    if friendname not in friends:
+        updatelog(f"{friendname} is not part of the friends list.")
+        return
+        
+    # Check for valid name
+    if (not checkValid(listname)) or (listname == "nil"):
+        updatelog(f"Invalid list name entered: {listname}. Name cannot be used.")
+        return
+    # Check if it exists
+    if listname not in lists:
+        updatelog(f"{listname} list does not exist.")
+        return
+    
+    # if valid list name and friend name
+    add_to_list_in_masterlist(listname, friendname)
+    return
 
 def postpicture(arg: str) -> None:
     """

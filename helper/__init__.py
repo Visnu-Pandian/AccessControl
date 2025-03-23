@@ -2,7 +2,7 @@ isLogged = False
 ownerName = ""
 userName = ""
 
-MasterList = {"all_friends": [], }
+MasterList = {"all_friends": [], "all_lists": [], }
 
 def set_is_logged(arg: bool) -> None:
     global isLogged
@@ -42,7 +42,7 @@ def get_masterlist() -> dict:
 
 def add_to_list_in_masterlist(arg: str, arg2:str) -> None:
     global MasterList
-    MasterList[arg].append(arg2)
+    MasterList[arg].append(arg2.strip())
     
     return
 
