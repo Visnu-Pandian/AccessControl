@@ -4,50 +4,142 @@ userName = ""
 
 MasterList = {"all_friends": [], "all_lists": [], }
 
-def set_is_logged(arg: bool) -> None:
+def set_is_logged(status: bool) -> None:
+    """
+    Sets session token to provided value.
+    
+    Parameter:
+    status (bool): Value to set session token to.
+    
+    Return:
+    None
+    """
     global isLogged
-    isLogged = arg
+    isLogged = status
     
     return
 
 def get_is_logged() -> bool:
+    """
+    Returns value of session token.
+    
+    Parameter:
+    None
+    
+    Return:
+    isLogged (bool): Value of session token.
+    """
     return isLogged
 
-def set_username(arg: str) -> None:
+def set_username(username: str) -> None:
+    """
+    Sets username to provided value.
+    
+    Parameter:
+    username (str): Value to set username to.
+    
+    Return:
+    None
+    """
     global userName
-    userName = arg
+    userName = username
     
     return
 
 def get_username() -> str:
+    """
+    Returns name of currently logged in user.
+    
+    Parameter:
+    None
+    
+    Return:
+    userName (str): Name of currently logged in user.
+    """
     return userName
 
-def set_ownername(arg: str) -> None:
+def set_ownername(ownername: str) -> None:
+    """
+    Sets owner of profile to provided value.
+    
+    Parameter:
+    ownername (str): Value to set ownername to.
+    
+    Return:
+    None
+    """
     global ownerName
-    ownerName = arg
+    ownerName = ownername
     
     return
 
 def get_ownername() -> str:
+    """
+    Returns name of current profile owner.
+    
+    Parameter:
+    None
+    
+    Return:
+    ownerName (str): Name of current profile owner.
+    """
     return ownerName
 
-def add_to_masterlist(arg: str) -> None:
+def add_to_masterlist(listname: str) -> None:
+    """
+    Adds a new list to the masterlist.
+    
+    Parameter:
+    listname (str): Name of new list to add.
+    
+    Return:
+    None
+    """
     global MasterList
-    MasterList[arg] = []
+    MasterList[listname] = []
     
     return
 
 def get_masterlist() -> dict:
+    """
+    Returns current masterlist.
+    
+    Parameter:
+    None
+    
+    Return:
+    MasterList (dict): Current masterlist.
+    """
     return MasterList
 
-def add_to_list_in_masterlist(arg: str, arg2:str) -> None:
+def add_to_list_in_masterlist(listname: str, itemname:str) -> None:
+    """
+    Adds item to nested list in masterlist.
+    
+    Parameter:
+    listname (str): Name of nested list.
+    itemname (str): Name of itemt to add to nested list.
+    
+    Return:
+    None
+    """
     global MasterList
-    MasterList[arg].append(arg2.strip())
+    MasterList[listname].append(itemname.strip())
     
     return
 
-def get_list_from_masterlist(arg: str) -> list[str]:
-    return MasterList[arg]
+def get_list_from_masterlist(listname: str) -> list[str]:
+    """
+    Returns a nested list from masterlist.
+    
+    Parameter:
+    listname (str): Name of nested list to return.
+    
+    Return:
+    nestedList (list[str]): Nested list.
+    """
+    nestedList = MasterList[listname]
+    return nestedList
 
 def clean_directory() -> None:
     """

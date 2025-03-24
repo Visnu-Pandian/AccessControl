@@ -57,12 +57,15 @@ def friendadd(friendname: str) -> None:
 
 def viewby(friendname: str) -> None:
     """
-    Checks if the friend is in the friends list.
-    If they are, they can view the user's profile.
-    If not, displays an error message.
-    Other commands can only be used when viewing a profile.
+    Attempts to view a profile as a given user.
     
     Example use: viewby friendname
+    
+    Parameter:
+    friendname (str): Name of friend to log in as.
+    
+    Return:
+    None
     """
     # Check logged in status
     if get_is_logged():
@@ -97,6 +100,12 @@ def logout() -> None:
     Logs out the current user from viewing a profile.
     
     Example use: logout
+    
+    Parameter:
+    None
+    
+    Return:
+    None
     """
     # Check logged in status
     if isLogged:
@@ -112,11 +121,15 @@ def listadd(listname: str) -> None:
     """
     Creates a unique empty list to which friends may be added.
     Can only be executed by the profile owner.
-    Lists cannot be created with the name "nil".
     
     Example use: listadd listname
-    """
     
+    Parameter:
+    listname (str): Name of list to add.
+    
+    Return:
+    None
+    """
     # Check logged in
     if not isLogged:
         updatelog("Must be logged in to use this command.")
@@ -155,8 +168,13 @@ def friendlist(arg: str) -> None:
     If the friend or list does not exist, displays an error message.
 
     Example use: friendlist friendname listname
+    
+    Parameter:
+    arg (str): Combination of friendname and listname with a space in between.
+    
+    Return:
+    None
     """
-
     # Check logged in
     if not isLogged:
         updatelog("Must be logged in to use this command.")
