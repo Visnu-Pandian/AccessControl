@@ -1,8 +1,10 @@
+import os
+
 isLogged = False
 ownerName = ""
 userName = ""
 
-MasterList = {"all_friends": [], "all_lists": [], }
+MasterList = {"all_friends": [], "all_lists": [], "all_pictures": [], }
 
 def set_is_logged(status: bool) -> None:
     """
@@ -100,6 +102,26 @@ def add_to_masterlist(listname: str) -> None:
     
     return
 
+def pic_to_masterlist(picname: str, listname: str="nil", perm1: str="rw", perm2: str="--", perm3: str="--") -> None:
+    """
+    Special case of adding new list.
+    Adds a new picture to the masterlist.
+    
+    Parameter:
+    picname (str): Name of new picture to add.
+    listname (str): Optional, name of list to add.
+    perm1 (str): Optional, picture owner permissions.
+    perm2 (str): Optional, picture list permissions.
+    perm3 (str): Optional, picture public permissions.
+    
+    Return:
+    None
+    """
+    global MasterList
+    MasterList[picname] = [get_username(), listname, perm1, perm2, perm3]
+
+    return
+
 def get_masterlist() -> dict:
     """
     Returns current masterlist.
@@ -141,6 +163,57 @@ def get_list_from_masterlist(listname: str) -> list[str]:
     nestedList = MasterList[listname]
     return nestedList
 
+def remove_from_masterlist(listname: str, parentname: str) -> None:
+    """
+    Deletes a list from the masterlist.
+    
+    Paramter:
+    listname (str): Name of list to remove.
+    parentname (str): Name of parent list to remove the list from.
+    
+    Return:
+    None
+    """
+    global MasterList
+    
+    del MasterList[listname]
+    MasterList[parentname].remove(listname)
+    
+    return
+
+def remove_file(filename: str) -> None:
+    """
+    Deletes a file from the active directory.
+    
+    Parameter:
+    filename (str): Name of file to delete.
+    
+    Return:
+    None
+    """
+    try:
+        os.remove(filename)
+        updatelog(f"File {filename} deleted.")
+    except FileNotFoundError:
+        updatelog(f"File {filename} not found.")
+    except Exception as e:
+        updatelog(f"An error occurred while deleting file {filename}: {e}")
+        
+    return
+
+def remove_picture(picname: str) -> None:
+    """
+    Deletes a picture from the directory.
+    
+    Parameter:
+    picname (str): Name of picture to delete.
+    
+    Return:
+    None
+    """
+    remove_file(f"{picname}.txt")
+    return
+    
 def clean_directory() -> None:
     """
     Ensures clean directory on program start.

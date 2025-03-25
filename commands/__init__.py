@@ -161,7 +161,7 @@ def listadd(listname: str) -> None:
     updatelog(f"Registered {listname}.")
     return
 
-def friendlist(arg: str) -> None:
+def friendlist(args: str) -> None:
     """
     Adds a friend to a list.
     Can only be executed by the profile owner.
@@ -170,7 +170,7 @@ def friendlist(arg: str) -> None:
     Example use: friendlist friendname listname
     
     Parameter:
-    arg (str): Combination of friendname and listname with a space in between.
+    args (str): Combination of friendname and listname with a space in between.
     
     Return:
     None
@@ -185,7 +185,7 @@ def friendlist(arg: str) -> None:
         return
     
     # Separating args
-    parts = arg.split(' ', 1)
+    parts = args.split(' ', 1)
     friendname = parts[0].strip()
     listname = parts[1].strip()
     
@@ -211,11 +211,11 @@ def friendlist(arg: str) -> None:
         updatelog(f"{listname} list does not exist.")
         return
     
-    # if valid list name and friend name
+    # If valid list name and friend name
     add_to_list_in_masterlist(listname, friendname)
     return
 
-def postpicture(arg: str) -> None:
+def postpicture(picname: str) -> None:
     """
     Posts a unique picture to the user's profile.
     The profile owner or a friend must be viewing the profile to execute this command.
@@ -225,20 +225,111 @@ def postpicture(arg: str) -> None:
 
     Example use: postpicture picturename.txt
     """
+    # Check logged in
+    if not isLogged:
+        updatelog("Must be logged in to use this command.")
+        return
 
-def chlst(arg: str) -> None:
+    picname = picname.replace(".txt", "")
+    picname = picname.strip()
+    
+    # Check for valid name
+    if (not checkValid(picname)) or (picname == "nil"):
+        updatelog(f"Invalid picture name entered: {picname}. Name cannot be used.")
+        return
+    
+    all_pictures = get_list_from_masterlist("all_pictures")
+    
+    # Check for pre-existing name
+    for pic in all_pictures:
+        if picname == pic:
+            updatelog(f"{picname} is not available.")
+            return
+    
+    # If valid picture name
+    with open(f"{picname}.txt", 'w') as picture:
+        picture.write(f"{picname}\n")
+    
+    pic_to_masterlist(picname)
+    add_to_list_in_masterlist("all_pictures", picname)
+    updatelog(f"Post created: {picname}.")
+    return
+
+def chlst(args: str) -> None:
     """
     Changes the list associated with a picture.
-    The profile owner or a friend must be viewing the profile to execute this command.
-    
+
     When being viewed by a friend, owned pictures can only be assigned lists to which the owner belongs.
     Profile owners can change the list associated with a file to any valid list.
     
     To dissociate a picture from all lists, use "nil" as the listname.
-    If the specified picture or list does not exist, displays an error message.
     
     Example use: chlst picturename.txt listname
+    
+    Parameters:
+    args (str): Combination of picture name and list name.
+    
+    Return:
+    None
     """
+    # Check logged in
+    if not isLogged:
+        updatelog("Must be logged in to use this command.")
+        return
+
+    # Separating args
+    parts = args.split(' ', 1)
+    picname = parts[0].replace(".txt", "").strip()
+    listname = parts[1].strip()
+    
+    pictures = get_list_from_masterlist("all_pictures")
+    lists = get_list_from_masterlist("all_lists")
+    
+    # Check for valid name
+    if (not checkValid(picname)) or (picname == "nil"):
+        updatelog(f"Invalid picture name entered: {picname}. Name cannot be used.")
+        return
+    # Check if it exists
+    if picname not in pictures:
+        updatelog(f"{picname} does not exist.")
+        return
+    
+    # Check for valid name
+    if not checkValid(listname):
+        updatelog(f"Invalid picture name entered: {picname}. Name cannot be used.")
+        return
+    # Check if it exists
+    if listname not in lists:
+        updatelog(f"{listname} does not exist.")
+        return
+    
+    # If valid picture and valid list
+    picture = get_list_from_masterlist(picname)
+    selected_list = get_list_from_masterlist(listname)
+    username = get_username()
+    
+    # Check permissions
+    if (username == get_ownername()):
+        
+        # Deleting old picture data and adding new instance
+        remove_from_masterlist(picname, "all_pictures")
+        pic_to_masterlist(picname, listname)
+        add_to_list_in_masterlist("all_pictures", picname)
+        
+    elif (username == picture[0].strip()):
+        
+        # If user is part of selected list
+        if username in selected_list:
+            remove_from_masterlist(picname, "all_pictures")
+            pic_to_masterlist(picname, listname)
+            add_to_list_in_masterlist("all_pictures", picname)
+        # If user is not a part of selected list
+        else:
+            updatelog(f"You do not have permission to add list {listname} to picture {picname}.")
+    else:
+        updatelog(f"You do not have permission to edit this photo: {picname}.")
+    
+    return
 
 def chmod(arg: str) -> None:
     """
