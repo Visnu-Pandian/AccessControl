@@ -102,13 +102,14 @@ def add_to_masterlist(listname: str) -> None:
     
     return
 
-def pic_to_masterlist(picname: str, listname: str="nil", perm1: str="rw", perm2: str="--", perm3: str="--") -> None:
+def pic_to_masterlist(picname: str, username: str, listname: str="nil", perm1: str="rw", perm2: str="--", perm3: str="--") -> None:
     """
     Special case of adding new list.
     Adds a new picture to the masterlist.
     
     Parameter:
     picname (str): Name of new picture to add.
+    username (str): Name of owner of picture.
     listname (str): Optional, name of list to add.
     perm1 (str): Optional, picture owner permissions.
     perm2 (str): Optional, picture list permissions.
@@ -118,7 +119,7 @@ def pic_to_masterlist(picname: str, listname: str="nil", perm1: str="rw", perm2:
     None
     """
     global MasterList
-    MasterList[picname] = [get_username(), listname, perm1, perm2, perm3]
+    MasterList[picname] = [username, listname, perm1, perm2, perm3]
 
     return
 

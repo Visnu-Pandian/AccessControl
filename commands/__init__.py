@@ -250,7 +250,7 @@ def postpicture(picname: str) -> None:
     with open(f"{picname}.txt", 'w') as picture:
         picture.write(f"{picname}\n")
     
-    pic_to_masterlist(picname)
+    pic_to_masterlist(picname, get_username())
     add_to_list_in_masterlist("all_pictures", picname)
     updatelog(f"Post created: {picname}.")
     return
@@ -313,16 +313,20 @@ def chlst(args: str) -> None:
         
         # Deleting old picture data and adding new instance
         remove_from_masterlist(picname, "all_pictures")
-        pic_to_masterlist(picname, listname)
+        pic_to_masterlist(picname, picture[1], listname, picture[3], picture[4], picture[5])
         add_to_list_in_masterlist("all_pictures", picname)
+        updatelog(f"Changed list associated with picture {picname}: {listname}.")
         
     elif (username == picture[0].strip()):
         
         # If user is part of selected list
         if username in selected_list:
+            
             remove_from_masterlist(picname, "all_pictures")
             pic_to_masterlist(picname, listname)
             add_to_list_in_masterlist("all_pictures", picname)
+            updatelog(f"Changed list associated with picture {picname}: {listname}.")
+            
         # If user is not a part of selected list
         else:
             updatelog(f"You do not have permission to add list {listname} to picture {picname}.")
@@ -331,7 +335,7 @@ def chlst(args: str) -> None:
     
     return
 
-def chmod(arg: str) -> None:
+def chmod(args: str) -> None:
     """
     Changes the access permissions associated with a picture.
     
@@ -340,16 +344,124 @@ def chmod(arg: str) -> None:
     Third rw are public permissions
     
     Example use: chmod picturename.txt rw r- --
-    """
     
-def chown(arg: str) -> None:
+    Parameter:
+    args (str): Combination of picture name and permissions
+    
+    Return:
+    None
+    """
+    # Check logged in
+    if not isLogged:
+        updatelog("Must be logged in to use this command.")
+        return
+    
+    # Separating args
+    parts = args.split(' ', 3)
+    picname = parts[0].replace(".txt", "").strip()
+    ownerperms = parts[1].strip()
+    posterperms = parts[2].strip()
+    publicperms = parts[3].strip()
+    
+    pictures = get_list_from_masterlist("all_pictures")
+    valid_perms = ["rw", "r-", "-w", "--"]
+    permlist = [ownerperms, posterperms, publicperms]
+    
+    # Check for valid name
+    if (not checkValid(picname)) or (picname == "nil"):
+        updatelog(f"Invalid picture name entered: {picname}. Name cannot be used.")
+        return
+    # Check if it exists
+    if picname not in pictures:
+        updatelog(f"{picname} does not exist.")
+        return
+    
+    # Check for valid perms
+    for perm in permlist:
+        if perm not in valid_perms:
+            updatelog(f"Invalid permissions entered: {perm}.")
+            return
+    
+    # If valid picture and valid perm values
+    picture = get_list_from_masterlist(picname)
+    username = get_username()
+    
+    # Check permissions
+    if (username == get_ownername()) or (username == picture[0].strip()):
+        
+        # Deleting old picture data and adding new instance
+        remove_from_masterlist(picname, "all_pictures")
+        pic_to_masterlist(picname, picture[1], picture[2], ownerperms, posterperms, publicperms)
+        add_to_list_in_masterlist("all_pictures", picname)
+        updatelog(f"Permissions of picture {picname} changed to: {ownerperms}, {posterperms}, {publicperms}.")
+        
+    else:
+        updatelog(f"You do not have permission to edit this photo: {picname}.")
+    
+    return
+    
+def chown(args: str) -> None:
     """
     Changes the owner of a file.
     This command can only be executed by the owner of a profile.
     If the specified picture or friendname does not exist, displays an error message.
     
     Example use: chown picturename.txt friendname
+    
+    Parameter:
+    args (str): Combination of picture name and new owner name.
+    
+    Return:
+    None
     """
+    # Check logged in
+    if not isLogged:
+        updatelog("Must be logged in to use this command.")
+        return
+    
+    # Separating args
+    parts = args.split(' ', 1)
+    picname = parts[0].replace(".txt", "").strip()
+    friendname = parts[1].strip()
+    
+    username = get_username()
+    
+    # Only profile owner can use this function
+    if (username != get_ownername()):
+        updatelog(f"You do not have permission to edit the owner of this photo: {picname}.")
+        return
+
+    pictures = get_list_from_masterlist("all_pictures")
+    friends = get_list_from_masterlist("all_lists")
+    
+    # Check for valid name
+    if (not checkValid(picname)) or (picname == "nil"):
+        updatelog(f"Invalid picture name entered: {picname}. Name cannot be used.")
+        return
+    # Check if it exists
+    if picname not in pictures:
+        updatelog(f"{picname} does not exist.")
+        return
+
+    # Check for valid name
+    if (not checkValid(friendname)) or (friendname == "nil"):
+        updatelog(f"Invalid friendname entered: {picname}. Name cannot be used.")
+        return
+    # Check if it exists
+    if friendname not in friends:
+        updatelog(f"{friendname} is not part of the friends list.")
+        return
+    
+    # If valid picture and valid friendname
+    picture = get_list_from_masterlist(picname)
+    
+    # Deleting old picture data and adding new instance
+    remove_from_masterlist(picname, "all_pictures")
+    pic_to_masterlist(picname, friendname, picture[2], picture[3], picture[4], picture[5])
+    add_to_list_in_masterlist("all_pictures", picname)
+    updatelog(f"Owner of picture {picname} changed to friend {friendname}.")
+    
+    return
 
 def readcomments(arg: str) -> None:
     """
