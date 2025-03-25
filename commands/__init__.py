@@ -391,7 +391,7 @@ def chmod(args: str) -> None:
         
         # Deleting old picture data and adding new instance
         remove_from_masterlist(picname, "all_pictures")
-        pic_to_masterlist(picname, picture[1], picture[2], ownerperms, posterperms, publicperms)
+        pic_to_masterlist(picname, picture[0], picture[1], ownerperms, posterperms, publicperms)
         add_to_list_in_masterlist("all_pictures", picname)
         updatelog(f"Permissions of picture {picname} changed to: {ownerperms}, {posterperms}, {publicperms}.")
         
@@ -457,20 +457,79 @@ def chown(args: str) -> None:
     
     # Deleting old picture data and adding new instance
     remove_from_masterlist(picname, "all_pictures")
-    pic_to_masterlist(picname, friendname, picture[2], picture[3], picture[4], picture[5])
+    pic_to_masterlist(picname, friendname, picture[1], picture[2], picture[3], picture[4])
     add_to_list_in_masterlist("all_pictures", picname)
     updatelog(f"Owner of picture {picname} changed to friend {friendname}.")
     
     return
 
-def readcomments(arg: str) -> None:
+def readcomments(picname: str) -> None:
     """
     Displays name and comments on the picture.
     Access is granted on the basis of r permissions associated with the list.
     If the picture doesn't exist, displays an error.
     
     Example use: readcomments picture.txt
+    
+    Parameter:
+    picname (str): Name of picture to read comments on.
+    
+    Return:
+    None
     """
+    # Check logged in
+    if not isLogged:
+        updatelog("Must be logged in to use this command.")
+        return
+    
+    picname = picname.replace(".txt", "").strip()
+    
+    pictures = get_list_from_masterlist("all_pictures")
+    # Check for valid name
+    if (not checkValid(picname)) or (picname == "nil"):
+        updatelog(f"Invalid picture name entered: {picname}. Name cannot be used.")
+        return
+    # Check if it exists
+    if picname not in pictures:
+        updatelog(f"{picname} does not exist.")
+        return
+    
+    # Getting permissions
+    picture = get_list_from_masterlist(picname)
+    picowner = picture[0]
+    piclist = picture[1]
+    ownerperms = picture[2]
+    listperms = picture[3]
+    publicperms = picture[4]
+    username = get_username()
+    
+    # Checking permissions
+    if username == get_ownername():
+        pass
+    elif (username == picowner):
+        if (ownerperms[0] == "r"):
+            pass
+        else:
+            updatelog(f"User {username} does not have read permissions on this photo: {picname}.txt.")
+    elif (username in piclist):
+        if (listperms[0] == "r"):
+            pass
+        else:
+            updatelog(f"User {username} does not have read permissions on this photo: {picname}.txt.")
+    elif (publicperms[0] == "r"):
+        pass
+    else:
+        updatelog(f"User {username} does not have read permissions on this photo: {picname}.txt.")
+    
+    with open(f"{picname}.txt", 'r') as file:
+        lines = file.readlines()
+    
+    
+    updatelog(f"Reading picture {picname} as {username}.")
+    for line in lines:
+        print(f"{line}\n")
+    
+    return
     
 def writecomments(arg: str) -> None:
     """
