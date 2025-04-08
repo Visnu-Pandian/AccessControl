@@ -18,7 +18,7 @@ def friendadd(friendname: str) -> None:
     
     # Check for valid name
     if not checkValid(friendname):
-        updatelog(f"Invalid name entered: {friendname}. Name was not added to the list.")
+        updatelog(f"Friendadd failed: invalid name.")
         return
 
     # Check for empty file AKA first call
@@ -27,11 +27,11 @@ def friendadd(friendname: str) -> None:
         
         with open("friends.txt", 'a') as file:
             file.write(f"{friendname}\n")
-            updatelog(f"{friendname} was added as owner. View profile to make additional changes.")
+            updatelog(f"Friend {friendname} added.")
     
     # Can only be called by the owner
     elif (get_username() != get_ownername()):
-        updatelog(f"{get_username} does not have permission to invoke this method.")
+        updatelog(f"Error: only {get_ownername()} may issue friendadd command.")
         return
     
     # When called by the owner
@@ -43,13 +43,13 @@ def friendadd(friendname: str) -> None:
         # Checking for pre-existing friend
         for friend in friends:
             if friendname == friend.strip():
-                updatelog(f"{friendname} already exists in the friends list.")
+                updatelog(f"Error: friend {friendname} already exists.")
                 return
         
         with open("friends.txt", 'a') as file:
             
             file.write(f"{friendname}\n")
-            updatelog(f"{friendname} was added as friend.")
+            updatelog(f"Friend {friendname} added.")
 
     # Only reached in cases 1 and 4 AKA new profile or owner adding a unique friend
     add_to_list_in_masterlist("all_friends", friendname)
@@ -76,7 +76,7 @@ def viewby(friendname: str) -> None:
     
     # Check for valid name
     if not checkValid(friendname):
-        updatelog(f"Invalid name entered: {friendname}. Name cannot be used.")
+        updatelog(f"Login failed: invalid name.")
         return
     
     # Check if friend exists in list
@@ -88,11 +88,11 @@ def viewby(friendname: str) -> None:
         if friendname == friend.strip():
             set_is_logged(True)
             set_username(friendname)
-            updatelog(f"Viewing profile of {get_ownername()} as {friendname}.")
+            updatelog(f"Friend {friendname} views the profile.")
             return
     
     # If friend does not exist
-    updatelog(f"Could not find {friendname} in the friends list.")
+    updatelog(f"Login failed: {friendname} does not exist.")
     return
 
 def logout() -> None:
@@ -108,8 +108,8 @@ def logout() -> None:
     None
     """
     # Check logged in status
-    if isLogged:
-        updatelog(f"User {get_username()} has been logged out.")
+    if get_is_logged():
+        updatelog(f"Friend {get_username()} logged out.")
         set_is_logged(False)
         set_username("")
     else:
@@ -131,19 +131,19 @@ def listadd(listname: str) -> None:
     None
     """
     # Check logged in
-    if not isLogged:
+    if not get_is_logged():
         updatelog("Must be logged in to use this command.")
         return
     # Check if owner
     elif (get_username() != get_ownername()):
-        updatelog("Only profile owner can use this command.")
+        updatelog(f"Error: only {get_ownername()} may issue this command.")
         return
     
     listname = listname.strip()
     
     # Check for valid name
     if (not checkValid(listname)) or (listname == "nil"):
-        updatelog(f"Invalid name entered: {listname}. Name cannot be used.")
+        updatelog(f"Failed: invalid name.")
         return
     
     
@@ -152,13 +152,13 @@ def listadd(listname: str) -> None:
     # Check for pre-existing name
     for item in all_lists:
         if listname == item:
-            updatelog(f"{listname} is not available.")
+            updatelog(f"Error: List {listname} already exists.")
             return
     
     # If unique list name
     add_to_masterlist(listname)
     add_to_list_in_masterlist("all_lists", listname)
-    updatelog(f"Registered {listname}.")
+    updatelog(f"List {listname} added.")
     return
 
 def friendlist(args: str) -> None:
@@ -176,12 +176,12 @@ def friendlist(args: str) -> None:
     None
     """
     # Check logged in
-    if not isLogged:
+    if not get_is_logged():
         updatelog("Must be logged in to use this command.")
         return
     # Check if owner
     elif (get_username() != get_ownername()):
-        updatelog("Only profile owner can use this command.")
+        updatelog(f"Error: only {get_ownername()} can issue friendlist command.")
         return
     
     # Separating args
@@ -195,24 +195,25 @@ def friendlist(args: str) -> None:
     
     # Check for valid name
     if (not checkValid(friendname)) or (friendname == "nil"):
-        updatelog(f"Invalid friend name entered: {friendname}. Name cannot be used.")
+        updatelog(f"Failed: invalid name.")
         return
     # Check if it exists
     if friendname not in friends:
-        updatelog(f"{friendname} is not part of the friends list.")
+        updatelog(f"Error: Friend {friendname} does not exist.")
         return
         
     # Check for valid name
     if (not checkValid(listname)) or (listname == "nil"):
-        updatelog(f"Invalid list name entered: {listname}. Name cannot be used.")
+        updatelog(f"Failed: invalid name.")
         return
     # Check if it exists
     if listname not in lists:
-        updatelog(f"{listname} list does not exist.")
+        updatelog(f"Error: List {listname} not found.")
         return
     
     # If valid list name and friend name
     add_to_list_in_masterlist(listname, friendname)
+    updatelog(f"Friend {friendname} added to list {listname}.")
     return
 
 def postpicture(picname: str) -> None:
@@ -226,7 +227,7 @@ def postpicture(picname: str) -> None:
     Example use: postpicture picturename.txt
     """
     # Check logged in
-    if not isLogged:
+    if not get_is_logged():
         updatelog("Must be logged in to use this command.")
         return
 
@@ -235,7 +236,7 @@ def postpicture(picname: str) -> None:
     
     # Check for valid name
     if (not checkValid(picname)) or (picname == "nil"):
-        updatelog(f"Invalid picture name entered: {picname}. Name cannot be used.")
+        updatelog(f"Failed: invalid picture name.")
         return
     
     all_pictures = get_list_from_masterlist("all_pictures")
@@ -243,7 +244,7 @@ def postpicture(picname: str) -> None:
     # Check for pre-existing name
     for pic in all_pictures:
         if picname == pic:
-            updatelog(f"{picname} is not available.")
+            updatelog(f"Error: File {picname} already exists.")
             return
     
     # If valid picture name
@@ -252,7 +253,7 @@ def postpicture(picname: str) -> None:
     
     pic_to_masterlist(picname, get_username())
     add_to_list_in_masterlist("all_pictures", picname)
-    updatelog(f"Post created: {picname}.")
+    updatelog(f"File {picname} with owner {get_username()} and default permissions created.")
     return
 
 def chlst(args: str) -> None:
@@ -273,7 +274,7 @@ def chlst(args: str) -> None:
     None
     """
     # Check logged in
-    if not isLogged:
+    if not get_is_logged():
         updatelog("Must be logged in to use this command.")
         return
 
@@ -287,20 +288,20 @@ def chlst(args: str) -> None:
     
     # Check for valid name
     if (not checkValid(picname)) or (picname == "nil"):
-        updatelog(f"Invalid picture name entered: {picname}. Name cannot be used.")
+        updatelog(f"Failed: invalid picture name.")
         return
     # Check if it exists
     if picname not in pictures:
-        updatelog(f"{picname} does not exist.")
+        updatelog(f"Error with chlst: picture {picname} not found.")
         return
     
     # Check for valid name
     if not checkValid(listname):
-        updatelog(f"Invalid picture name entered: {picname}. Name cannot be used.")
+        updatelog(f"Failed: invalid list name.")
         return
     # Check if it exists
     if listname not in lists:
-        updatelog(f"{listname} does not exist.")
+        updatelog(f"Error with chlst: list {listname} not found.")
         return
     
     # If valid picture and valid list
@@ -313,9 +314,9 @@ def chlst(args: str) -> None:
         
         # Deleting old picture data and adding new instance
         remove_from_masterlist(picname, "all_pictures")
-        pic_to_masterlist(picname, picture[1], listname, picture[3], picture[4], picture[5])
+        pic_to_masterlist(picname, picture[0], listname, picture[2], picture[3], picture[4])
         add_to_list_in_masterlist("all_pictures", picname)
-        updatelog(f"Changed list associated with picture {picname}: {listname}.")
+        updatelog(f"List for {picname} changed to {listname} by {username}.")
         
     elif (username == picture[0].strip()):
         
@@ -325,13 +326,13 @@ def chlst(args: str) -> None:
             remove_from_masterlist(picname, "all_pictures")
             pic_to_masterlist(picname, listname)
             add_to_list_in_masterlist("all_pictures", picname)
-            updatelog(f"Changed list associated with picture {picname}: {listname}.")
+            updatelog(f"List for {picname} changed to {listname} by {username}.")
             
         # If user is not a part of selected list
         else:
-            updatelog(f"You do not have permission to add list {listname} to picture {picname}.")
+            updatelog(f"Error with chlst: User {username} is not a member of list {listname}.")
     else:
-        updatelog(f"You do not have permission to edit this photo: {picname}.")
+        updatelog(f"Error with chlst: User {username} does not have permission to edit this picture: {picname}.")
     
     return
 
@@ -352,7 +353,7 @@ def chmod(args: str) -> None:
     None
     """
     # Check logged in
-    if not isLogged:
+    if not get_is_logged():
         updatelog("Must be logged in to use this command.")
         return
     
@@ -369,11 +370,11 @@ def chmod(args: str) -> None:
     
     # Check for valid name
     if (not checkValid(picname)) or (picname == "nil"):
-        updatelog(f"Invalid picture name entered: {picname}. Name cannot be used.")
+        updatelog(f"Failed: invalid picture name.")
         return
     # Check if it exists
     if picname not in pictures:
-        updatelog(f"{picname} does not exist.")
+        updatelog(f"Error with chmod: picture {picname} not found.")
         return
     
     # Check for valid perms
@@ -415,7 +416,7 @@ def chown(args: str) -> None:
     None
     """
     # Check logged in
-    if not isLogged:
+    if not get_is_logged():
         updatelog("Must be logged in to use this command.")
         return
     
@@ -440,7 +441,7 @@ def chown(args: str) -> None:
         return
     # Check if it exists
     if picname not in pictures:
-        updatelog(f"{picname} does not exist.")
+        updatelog(f"Error with chown: {picname} not found.")
         return
 
     # Check for valid name
@@ -478,7 +479,7 @@ def readcomments(picname: str) -> None:
     None
     """
     # Check logged in
-    if not isLogged:
+    if not get_is_logged():
         updatelog("Must be logged in to use this command.")
         return
     
@@ -497,7 +498,10 @@ def readcomments(picname: str) -> None:
     # Getting permissions
     picture = get_list_from_masterlist(picname)
     picowner = picture[0]
-    piclist = picture[1]
+    if picture[1] == 'nil':
+        piclist = []
+    else:
+        piclist = get_list_from_masterlist(picture[1])
     ownerperms = picture[2]
     listperms = picture[3]
     publicperms = picture[4]
@@ -511,27 +515,29 @@ def readcomments(picname: str) -> None:
             pass
         else:
             updatelog(f"User {username} does not have read permissions on this photo: {picname}.txt.")
+            return
     elif (username in piclist):
         if (listperms[0] == "r"):
             pass
         else:
             updatelog(f"User {username} does not have read permissions on this photo: {picname}.txt.")
+            return
     elif (publicperms[0] == "r"):
         pass
     else:
         updatelog(f"User {username} does not have read permissions on this photo: {picname}.txt.")
+        return
     
     with open(f"{picname}.txt", 'r') as file:
         lines = file.readlines()
     
-    
-    updatelog(f"Reading picture {picname} as {username}.")
+    updatelog(f"Friend {username} reads {picname} as")
     for line in lines:
-        print(f"{line}\n")
+        print(f"{line}")
     
     return
     
-def writecomments(arg: str) -> None:
+def writecomments(args: str) -> None:
     """
     Allows viewing the picture and adding a comment to it.
     Access is granted on the basis of w permissions associated with the list.
@@ -539,10 +545,83 @@ def writecomments(arg: str) -> None:
     
     Example use: writecomments picturename.txt sometext
     """
+    # Check logged in
+    if not get_is_logged():
+        updatelog("Must be logged in to use this command.")
+        return
     
+    # Separating args
+    parts = args.split(' ', 1)
+    picname = parts[0].replace(".txt", "").strip()
+    sometext = parts[1].strip()
+    
+    pictures = get_list_from_masterlist("all_pictures")
+    # Check for valid name
+    if (not checkValid(picname)) or (picname == "nil"):
+        updatelog("Failed: invalid picture name.")
+        return
+    # Check if it exists
+    if picname not in pictures:
+        updatelog(f"Error with writecomments: {picname} not found.")
+        return
+    
+    # Getting permissions
+    picture = get_list_from_masterlist(picname)
+    picowner = picture[0]
+    if picture[1] == 'nil':
+        piclist = []
+    else:
+        piclist = get_list_from_masterlist(picture[1])
+    ownerperms = picture[2]
+    listperms = picture[3]
+    publicperms = picture[4]
+    username = get_username()
+    
+    # Checking permissions
+    if username == get_ownername():
+        pass
+    elif (username == picowner):
+        if (ownerperms[1] == "w"):
+            pass
+        else:
+            updatelog(f"User {username} does not have write permissions on this photo: {picname}.txt.")
+            return
+    elif (username in piclist):
+        if (listperms[1] == "w"):
+            pass
+        else:
+            updatelog(f"User {username} does not have write permissions on this photo: {picname}.txt.")
+            return
+    elif (publicperms[1] == "w"):
+        pass
+    else:
+        updatelog(f"User {username} does not have write permissions on this photo: {picname}.txt.")
+        return
+    
+    with open(f"{picname}.txt", 'a') as file:
+        updatelog(f"Friend {username} wrote to {picname}: {sometext}")
+        file.write(f"{sometext}\n")
+    
+    return
+
 def end() -> None:
     """
     Exits the program.
 
     Example use: end
     """
+    master = get_masterlist()
+
+    lists = master["all_lists"]
+    
+    with open("lists.txt", 'w') as file:
+        for listname in lists:
+            file.write(f"{listname}: {master[listname]}\n")
+    
+    pictures = master["all_pictures"]
+    
+    with open("pictures.txt", 'w') as file:
+        for picname in pictures:
+            file.write(f"{picname}: {master[picname]}")
+    
+    updatelog("Program has exited.")

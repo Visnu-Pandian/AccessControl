@@ -30,7 +30,6 @@ def execute_commands_from_file(file_path: str) -> None:
 
     try:
         with open(file_path, 'r') as file:
-            updatelog(f"Opening file: {file_path}")
             commands_list = file.readlines()
         
         if not commands_list:
@@ -38,16 +37,18 @@ def execute_commands_from_file(file_path: str) -> None:
             return
             
         first_command = obtain_command(commands_list[0].strip())
-        if first_command != "friendadd":
+        if first_command[0] != "friendadd":
             updatelog("The first command must be 'friendadd'. Terminating the program.")
             return
         
         for command_line in commands_list:
             command, argument = obtain_command(command_line.strip())
-            
+                
             if command in command_map:
-                updatelog(f"Executing command: {command} with arguments: {argument}")
-                command_map[command](argument)
+                if argument == "":
+                    command_map[command]()
+                else:
+                    command_map[command](argument)
             else:
                 updatelog(f"Unknown command: {command}")
     except FileNotFoundError:
@@ -59,7 +60,7 @@ def execute_commands_from_file(file_path: str) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: access <commands_file>")
+        print("Usage: friendadd <friendname>")
     else:
         clean_directory()
         commands_file = sys.argv[1]
