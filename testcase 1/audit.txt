@@ -1,0 +1,35 @@
+Friend root added.
+Friend root views the profile.
+Friend rama added.
+Friend sita added.
+List developers added.
+Error: friend sita already exists.
+Friend root logged out.
+Login failed: ramesh does not exist.
+Friend rama views the profile.
+File veda with owner rama and default permissions created.
+Friend rama wrote to veda: echo I am become Death,
+Permissions of picture veda changed to: r-, rw, r-.
+Error with chmod: picture script2 not found.
+Error with chlst: User rama is not a member of list developers.
+Friend rama logged out.
+Friend root views the profile.
+Error: friend sita already exists.
+List for veda changed to developers by root.
+Error: List developers already exists.
+Friend sita added to list developers.
+Friend rama added to list developers.
+Error with chown: veda2 not found.
+Friend root logged out.
+Friend sita views the profile.
+Error: File veda already exists.
+Friend sita wrote to veda: echo the Destroyer of Worlds!
+Friend sita reads veda as
+echo I am become Death,
+
+echo the Destroyer of Worlds!
+
+Error: only root may issue this command.
+Error: only root may issue friendadd command.
+Friend sita logged out.
+Program has exited.

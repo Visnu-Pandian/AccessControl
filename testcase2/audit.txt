@@ -1,0 +1,36 @@
+Friend root added.
+Friend root views the profile.
+Friend caesar added.
+Friend brutus added.
+List romans added.
+Friend caesar added to list romans.
+Friend brutus added to list romans.
+Unknown command: viweby
+Friend root logged out.
+Login failed: pompeii does not exist.
+Friend brutus views the profile.
+File invitation with owner brutus and default permissions created.
+Friend brutus wrote to invitation: I seek forgiveness.
+Permissions of picture invitation changed to: rw, rw, r-.
+Error with chmod: picture betrayal not found.
+List for invitation changed to romans by brutus.
+Friend brutus logged out.
+Friend root views the profile.
+Friend pompeii added.
+List julii added.
+Friend brutus added to list julii.
+Friend pompeii added to list julii.
+List for invitation changed to julii by root.
+caesar is not part of the friends list.
+Permissions of picture invitation changed to: rw, r-, --.
+Friend root logged out.
+Friend caesar views the profile.
+User caesar does not have write permissions on this photo: invitation.txt.
+You do not have permission to edit this photo: invitation.
+Friend caesar logged out.
+Friend brutus views the profile.
+Friend brutus reads invitation as
+I seek forgiveness.
+
+Friend brutus logged out.
+Program has exited.

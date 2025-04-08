@@ -1,0 +1,31 @@
+friendadd root
+viewby root
+friendadd rama
+friendadd sita
+listadd developers
+friendadd sita
+logout
+viewby ramesh
+viewby rama
+postpicture veda
+writecomments veda echo I am become Death,
+chmod veda r- rw r-
+chmod script2 rw rw rw
+chlst veda developers
+logout
+viewby root
+friendadd sita
+chlst veda developers
+listadd developers
+friendlist sita developers
+friendlist rama developers
+chown veda2 sita
+logout
+viewby sita
+postpicture veda
+writecomments veda echo the Destroyer of Worlds!
+readcomments veda
+listadd developers
+friendadd lakshman
+logout
+end

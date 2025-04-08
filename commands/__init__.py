@@ -249,7 +249,7 @@ def postpicture(picname: str) -> None:
     
     # If valid picture name
     with open(f"{picname}.txt", 'w') as picture:
-        picture.write(f"{picname}\n")
+        pass
     
     pic_to_masterlist(picname, get_username())
     add_to_list_in_masterlist("all_pictures", picname)
@@ -533,7 +533,7 @@ def readcomments(picname: str) -> None:
     
     updatelog(f"Friend {username} reads {picname} as")
     for line in lines:
-        print(f"{line}")
+        updatelog(f"{line}")
     
     return
     

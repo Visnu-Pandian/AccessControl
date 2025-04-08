@@ -1,0 +1,34 @@
+friendadd root
+viewby root
+friendadd caesar
+friendadd brutus
+listadd romans
+friendlist caesar romans
+friendlist brutus romans
+viweby brutus
+logout
+viewby pompeii
+viewby brutus
+postpicture invitation
+writecomments invitation I seek forgiveness.
+chmod invitation rw rw r-
+chmod betrayal -- -- rw
+chlst invitation romans
+logout
+viewby root
+friendadd pompeii
+listadd julii
+friendlist brutus julii
+friendlist pompeii julii
+chlst invitation julii
+chown invitation caesar
+chmod invitation rw r- --
+logout
+viewby caesar
+writecomments invitation And ye shall recieve!
+chmod invitation rw rw r-
+logout
+viewby brutus
+readcomments invitation
+logout
+end
