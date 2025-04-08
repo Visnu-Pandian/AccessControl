@@ -45,7 +45,7 @@ And so on. The first three keys are shorthand lists which maintain the names of 
 
 List items are stored as key:value pairs with the list name being keys and their listed contents being the values.
 
-The masterlist is managed and referenced using a number of helper methods, each of which have their own decriptions, parameters and return types listed under their function headers.
+The masterlist is managed and referenced using a number of helper methods, each of which have their own descriptions, parameters and return types listed under their function headers.
 
 In summary, the helper methods can be used to add lists and pictures to the masterlist, remove lists and pictures from the masterlist, access the entire masterlist, access specific lists from the masterlist.
 
